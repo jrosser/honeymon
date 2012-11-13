@@ -23,7 +23,8 @@ SOURCES += \
     unknown16model.cpp \
     temperaturestab.cpp \
     messagetab.cpp \
-    messagemodel.cpp
+    messagemodel.cpp \
+    parserbinary.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -43,7 +44,9 @@ HEADERS += \
     unknown16model.h \
     temperaturestab.h \
     messagetab.h \
-    messagemodel.h
+    messagemodel.h \
+    parser.h \
+    parserbinary.h
 
 FORMS += \
     mainwindow.ui \
