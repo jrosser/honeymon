@@ -16,6 +16,7 @@ class X1060Model;
 class Unknown16Model;
 class Unknown18Model;
 class MessageModel;
+class Parser;
 
 #include "logfile.h"
 
@@ -68,6 +69,7 @@ private:
 
     NodeNames *nodeNames;
     Decoder *decoder;
+    Parser *parser;
 
     TempModel *tempDistModel;
     SetpointModel *zoneSetpointModel;

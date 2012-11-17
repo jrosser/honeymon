@@ -26,6 +26,8 @@
 #include "unknowntab.h"
 #include "messagetab.h"
 
+#include "parserfactory.h"
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -115,7 +117,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     initActionsConnections();
 
+    QString a("binary");
+    parser = ParserCreate(a);
     connect(serial, SIGNAL(readyRead()), this, SLOT(readData()));
+    connect(parser, SIGNAL(outputBytes(QByteArray)), decoder, SLOT(inputBytes(QByteArray)));
+
     connect(decoder, SIGNAL(consoleMessage(QString)), this, SLOT(message(QString)));
     connect(decoder, SIGNAL(gotMessage(QByteArray)), messageModel, SLOT(newData(QByteArray)));
 
@@ -160,7 +166,8 @@ void MainWindow::readPendingDatagrams()
         udpSocket->readDatagram(datagram.data(), datagram.size(),
                                 &sender, &senderPort);
 
-        decoder->inputBytes(datagram);
+        if(parser)
+            parser->inputBytes(datagram);
     }
 }
 
@@ -230,7 +237,8 @@ void MainWindow::readData()
 {
     QByteArray data = serial->readAll();
 
-    decoder->inputBytes(data);
+    if(parser)
+        parser->inputBytes(data);
 }
 
 void MainWindow::message(QString s)

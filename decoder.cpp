@@ -17,7 +17,7 @@ Decoder::Decoder()
     numValidMessages = 0;
 }
 
-void Decoder::inputBytes(QByteArray &in)
+void Decoder::inputBytes(QByteArray in)
 {
     int size = in.size();
     numInputBytes += size;

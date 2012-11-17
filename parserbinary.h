@@ -11,7 +11,7 @@ public:
     ParserBinary();
 
 public slots:
-    void inputBytes(QByteArray in) = 0;
+    void inputBytes(QByteArray in);
 
 };
 

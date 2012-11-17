@@ -1,4 +1,4 @@
-CONFIG += serialport
+CONFIG += serialport debug
 QT += network
 
 TARGET = honeymon
@@ -24,7 +24,8 @@ SOURCES += \
     temperaturestab.cpp \
     messagetab.cpp \
     messagemodel.cpp \
-    parserbinary.cpp
+    parserbinary.cpp \
+    parserfactory.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -46,7 +47,8 @@ HEADERS += \
     messagetab.h \
     messagemodel.h \
     parser.h \
-    parserbinary.h
+    parserbinary.h \
+    parserfactory.h
 
 FORMS += \
     mainwindow.ui \

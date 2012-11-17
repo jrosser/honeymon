@@ -47,7 +47,7 @@ signals:
     void logMessage(QString);
 
 public slots:
-    void inputBytes(QByteArray &in);
+    void inputBytes(QByteArray in);
 
 private:
     state_t state;
