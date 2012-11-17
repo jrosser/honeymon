@@ -25,7 +25,8 @@ SOURCES += \
     messagetab.cpp \
     messagemodel.cpp \
     parserbinary.cpp \
-    parserfactory.cpp
+    parserfactory.cpp \
+    parserascii.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -48,7 +49,8 @@ HEADERS += \
     messagemodel.h \
     parser.h \
     parserbinary.h \
-    parserfactory.h
+    parserfactory.h \
+    parserascii.h
 
 FORMS += \
     mainwindow.ui \
