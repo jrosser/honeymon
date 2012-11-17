@@ -13,9 +13,6 @@ public:
 public slots:
     void inputBytes(QByteArray in) = 0;
 
-signals:
-    void outputBytes(QByteArray out);
-
 };
 
 #endif // PARSERBINARY_H
