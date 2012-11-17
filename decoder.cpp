@@ -1,7 +1,5 @@
 #include "decoder.h"
 
-#include "stdio.h"
-
 Decoder::Decoder()
 {
     state = IDLE;
@@ -182,7 +180,6 @@ void Decoder::checksum(QByteArray &in)
         emit checkSumErrorCount(numCheckSumErrors);
         emit consoleMessage(QString("CHECKSUM - FAIL\n"));
     }
-    fprintf(stderr, "\n");
 }
 
 void Decoder::writeLog(QByteArray &in, quint32 command)
