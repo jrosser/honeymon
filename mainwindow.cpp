@@ -46,6 +46,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionDisconnect->setEnabled(false);
     ui->actionQuit->setEnabled(true);
     ui->actionConfigure->setEnabled(true);
+    ui->actionAscii->setEnabled(true);
+    ui->actionBinary->setEnabled(true);
 
     nodeNames = new NodeNames();
     logFile = new LogFile();
@@ -117,10 +119,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     initActionsConnections();
 
-    QString a("binary");
-    parser = ParserCreate(a);
+    parser=NULL;
+    setBinaryParser();
+
     connect(serial, SIGNAL(readyRead()), this, SLOT(readData()));
-    connect(parser, SIGNAL(outputBytes(QByteArray)), decoder, SLOT(inputBytes(QByteArray)));
 
     connect(decoder, SIGNAL(consoleMessage(QString)), this, SLOT(message(QString)));
     connect(decoder, SIGNAL(gotMessage(QByteArray)), messageModel, SLOT(newData(QByteArray)));
@@ -246,6 +248,34 @@ void MainWindow::message(QString s)
     console->putData(s.toAscii());
 }
 
+void MainWindow::setParser(QString type)
+{
+    if(parser)
+    {
+        parser->disconnect();
+        delete parser;
+        parser=NULL;
+    }
+
+    qDebug() << "setting parser to " << type;
+    parser=ParserCreate(type);
+    connect(parser, SIGNAL(outputBytes(QByteArray)), decoder, SLOT(inputBytes(QByteArray)));
+}
+
+void MainWindow::setAsciiParser()
+{
+    setParser(QString("ascii"));
+    ui->actionAscii->setChecked(true);
+    ui->actionBinary->setChecked(false);
+}
+
+void MainWindow::setBinaryParser()
+{
+    setParser(QString("binary"));
+    ui->actionAscii->setChecked(false);
+    ui->actionBinary->setChecked(true);
+}
+
 void MainWindow::initActionsConnections()
 {
     connect(ui->actionConnect, SIGNAL(triggered()), this, SLOT(openSerialPort()));
@@ -255,4 +285,6 @@ void MainWindow::initActionsConnections()
     connect(ui->actionClear, SIGNAL(triggered()), console, SLOT(clear()));
     connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(about()));
     connect(ui->actionAboutQt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
+    connect(ui->actionAscii, SIGNAL(triggered()), this, SLOT(setAsciiParser()));
+    connect(ui->actionBinary, SIGNAL(triggered()), this, SLOT(setBinaryParser()));
 }

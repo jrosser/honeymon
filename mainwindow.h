@@ -52,7 +52,9 @@ private slots:
     void readData();
     void message(QString);
     void readPendingDatagrams();
-
+    void setParser(QString);
+    void setAsciiParser();
+    void setBinaryParser();
 private:
     void initActionsConnections();
 
