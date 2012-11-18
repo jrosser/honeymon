@@ -1,4 +1,4 @@
-CONFIG += serialport debug
+CONFIG += serialport
 QT += network
 
 TARGET = honeymon

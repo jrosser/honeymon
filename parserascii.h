@@ -16,6 +16,7 @@ public slots:
     void inputBytes(QByteArray in);
 
 private:
+    quint8 charToInt(char c);
     void decodeChar(char c);
     state_t state;
     QByteArray data;

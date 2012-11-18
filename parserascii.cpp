@@ -14,6 +14,18 @@ void ParserAscii::inputBytes(QByteArray in)
     }
 }
 
+quint8 ParserAscii::charToInt(char n)
+{
+    if (n >= '0' && n <= '9')
+         return (n-'0');
+     else
+
+     if (n >= 'A' && n <= 'F')
+         return (n-'A'+10);
+     else
+         return 0;
+}
+
 //reformat to binary equivalent
 void ParserAscii::decodeChar(char c)
 {
@@ -40,13 +52,13 @@ void ParserAscii::decodeChar(char c)
 
         case PAYLOAD1:
             //first character of payload
-            byte = (c - '0') * 16;
+            byte = charToInt(c) * 16;
             state = PAYLOAD2;
             break;
 
         case PAYLOAD2:
             //second character of payload
-            byte += (c - '0');
+            byte += charToInt(c);
             data.append(byte);
 
             //look for end of message
