@@ -295,10 +295,13 @@ void Decoder::decodeHeader(QByteArray &in)
 void Decoder::decode2309(quint32 id1, quint32 id2, quint32 length, quint32 i, QByteArray &in)
 {
     //zone setpoint setting
-    quint32 zone = in.at(i) & 0xFF;
-    quint32 temp_i = (in.at(i+1) & 0xFF) << 8 | (in.at(i+2) & 0xFF);
-    float temp = (float)temp_i / 100.0;
-    emit zoneSetpointSetting(id1, id2, zone, temp);
+    //a number of 3 byte sections
+    for(int n=i; n<in.size()-1; n+=3) {
+        quint32 zone = in.at(n) & 0xFF;
+        quint32 temp_i = (in.at(n+1) & 0xFF) << 8 | (in.at(n+2) & 0xFF);
+        float temp = (float)temp_i / 100.0;
+        emit zoneSetpointSetting(id1, id2, zone, temp);
+    }
 }
 
 void Decoder::decode3150(quint32 id1, quint32 id2, quint32 length, quint32 i, QByteArray &in)
