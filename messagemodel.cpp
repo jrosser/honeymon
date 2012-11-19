@@ -5,11 +5,12 @@
 
 MessageModel::MessageModel(QObject *parent) : QAbstractTableModel(parent)
 {
+    numMessages=0;
 }
 
 int MessageModel::rowCount(const QModelIndex &) const
 {
-    return messageList.count();
+    return numMessages;
 }
 
 int MessageModel::columnCount(const QModelIndex &) const
@@ -96,6 +97,7 @@ void MessageModel::newData(QByteArray data)
     r.data = data;
 
     messageList.append(r);
+    numMessages++;
 
     //for simplicity, request that the whole view is updated
     QModelIndex topLeft = createIndex(0,0);
