@@ -43,6 +43,8 @@ signals:
     void manchesterInvalidCount(quint32);
     void checkSumErrorCount(quint32);
     void validMessageCount(quint32);
+    void seventyCount(quint32);
+    void collisionCount(quint32);
 
     void logMessage(QString);
 
@@ -79,6 +81,8 @@ private:
     quint32 numManchesterInvalid;
     quint32 numCheckSumErrors;
     quint32 numValidMessages;
+    quint32 numSeventyBytes;
+    quint32 numCollisions;
 };
 
 #endif // DECODER_H

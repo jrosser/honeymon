@@ -21,6 +21,8 @@ public slots:
 
 private:
 
+    quint32 numMessages;
+
     struct record_t {
       QTime time;
       QByteArray data;

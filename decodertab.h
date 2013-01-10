@@ -21,6 +21,8 @@ public slots:
     void manchesterInvalidCount(quint32);
     void checkSumErrorCount(quint32);
     void validMessageCount(quint32);
+    void seventyCount(quint32);
+    void collisionCount(quint32);
 
 private:
     QLabel *numInputBytesLabel;
@@ -30,6 +32,8 @@ private:
     QLabel *numManchesterInvalidLabel;
     QLabel *numCheckSumErrorsLabel;
     QLabel *numValidMessagesLabel;
+    QLabel *numSeventyLabel;
+    QLabel *numCollisionLabel;
 };
 
 #endif // DECODERTAB_H

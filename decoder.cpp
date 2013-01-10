@@ -13,6 +13,8 @@ Decoder::Decoder()
     numManchesterInvalid = 0;
     numCheckSumErrors = 0;
     numValidMessages = 0;
+    numCollisions = 0;
+    numSeventyBytes = 0;
 }
 
 void Decoder::inputBytes(QByteArray in)
@@ -58,6 +60,25 @@ void Decoder::decodeChar(char c)
         break;
 
       case PAYLOAD:
+        //why do i receive 0x70 characters?
+        //these seem spurious yet messages are valid with them removed
+        if(c == 0x70) {
+            numSeventyBytes++;
+            emit seventyCount(numSeventyBytes);
+            break;
+        }
+
+        //if two messages collide, we find the 0x33 0x55 0x53 pattern
+        //in the middle of an existing payload
+        if(c == '3') {
+          raw->clear();
+          raw->append(c);
+          state = HEAD1;
+          numCollisions++;
+          emit collisionCount(numCollisions);
+          break;
+        }
+
         raw->append(c);
         if (c=='5') {
             numCandidatePayloads++;
@@ -127,6 +148,7 @@ void Decoder::manchesterDecode()
     msg.clear();
     if(raw->length()%2 != 0) {
         numLengthOdd++;
+        emit lengthOddCount(numLengthOdd);
         emit consoleMessage(QString("ERROR - packet length is not a multiple of 2\n"));
         return;
     }
