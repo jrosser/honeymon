@@ -5,4 +5,5 @@ ui_*.h
 *.pro.user
 *.swp
 honeymon
+honeymon.app
 Makefile
