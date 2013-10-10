@@ -1,39 +1,39 @@
 /****************************************************************************
 **
-** Copyright (C) 2012 Denis Shienkov <scapig@yandex.ru>
+** Copyright (C) 2012 Denis Shienkov <denis.shienkov@gmail.com>
 ** Copyright (C) 2012 Laszlo Papp <lpapp@kde.org>
-** Contact: http://www.qt-project.org/
+** Contact: http://www.qt-project.org/legal
 **
 ** This file is part of the QtSerialPort module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** GNU Lesser General Public License Usage
-** This file may be used under the terms of the GNU Lesser General Public
-** License version 2.1 as published by the Free Software Foundation and
-** appearing in the file LICENSE.LGPL included in the packaging of this
-** file. Please review the following information to ensure the GNU Lesser
-** General Public License version 2.1 requirements will be met:
-** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and Digia.  For licensing terms and
+** conditions see http://qt.digia.com/licensing.  For further information
+** use the contact form at http://qt.digia.com/contact-us.
 **
-** In addition, as a special exception, Nokia gives you certain additional
-** rights. These rights are described in the Nokia Qt LGPL Exception
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Digia gives you certain additional
+** rights.  These rights are described in the Digia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU General
-** Public License version 3.0 as published by the Free Software Foundation
-** and appearing in the file LICENSE.GPL included in the packaging of this
-** file. Please review the following information to ensure the GNU General
-** Public License version 3.0 requirements will be met:
-** http://www.gnu.org/copyleft/gpl.html.
-**
-** Other Usage
-** Alternatively, this file may be used in accordance with the terms and
-** conditions contained in a signed written agreement between you and Nokia.
-**
-**
-**
-**
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 3.0 as published by the Free Software
+** Foundation and appearing in the file LICENSE.GPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU General Public License version 3.0 requirements will be
+** met: http://www.gnu.org/copyleft/gpl.html.
 **
 **
 ** $QT_END_LICENSE$
@@ -43,9 +43,11 @@
 #include "settingsdialog.h"
 #include "ui_settingsdialog.h"
 
-#include <QtAddOnSerialPort/serialportinfo.h>
+#include <QtSerialPort/QSerialPortInfo>
 #include <QIntValidator>
 #include <QLineEdit>
+
+QT_USE_NAMESPACE
 
 SettingsDialog::SettingsDialog(QWidget *parent) :
     QDialog(parent),
@@ -55,14 +57,14 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
 
     intValidator = new QIntValidator(0, 4000000, this);
 
-    ui->rateBox->setInsertPolicy(QComboBox::NoInsert);
+    ui->baudRateBox->setInsertPolicy(QComboBox::NoInsert);
 
     connect(ui->applyButton, SIGNAL(clicked()),
             this, SLOT(apply()));
-    connect(ui->portsBox, SIGNAL(currentIndexChanged(int)),
+    connect(ui->serialPortInfoListBox, SIGNAL(currentIndexChanged(int)),
             this, SLOT(showPortInfo(int)));
-    connect(ui->rateBox, SIGNAL(currentIndexChanged(int)),
-            this, SLOT(checkCustomRatePolicy(int)));
+    connect(ui->baudRateBox, SIGNAL(currentIndexChanged(int)),
+            this, SLOT(checkCustomBaudRatePolicy(int)));
 
     fillPortsParameters();
     fillPortsInfo();
@@ -83,7 +85,7 @@ SettingsDialog::Settings SettingsDialog::settings() const
 void SettingsDialog::showPortInfo(int idx)
 {
     if (idx != -1) {
-        QStringList list = ui->portsBox->itemData(idx).toStringList();
+        QStringList list = ui->serialPortInfoListBox->itemData(idx).toStringList();
         ui->descriptionLabel->setText(tr("Description: %1").arg(list.at(1)));
         ui->manufacturerLabel->setText(tr("Manufacturer: %1").arg(list.at(2)));
         ui->locationLabel->setText(tr("Location: %1").arg(list.at(3)));
@@ -98,12 +100,13 @@ void SettingsDialog::apply()
     hide();
 }
 
-void SettingsDialog::checkCustomRatePolicy(int idx)
+void SettingsDialog::checkCustomBaudRatePolicy(int idx)
 {
-    ui->rateBox->setEditable(idx == 4);
-    if (idx == 4) {
-        ui->rateBox->clearEditText();
-        QLineEdit *edit = ui->rateBox->lineEdit();
+    bool isCustomBaudRate = !ui->baudRateBox->itemData(idx).isValid();
+    ui->baudRateBox->setEditable(isCustomBaudRate);
+    if (isCustomBaudRate) {
+        ui->baudRateBox->clearEditText();
+        QLineEdit *edit = ui->baudRateBox->lineEdit();
         edit->setValidator(intValidator);
     }
 }
@@ -112,85 +115,91 @@ void SettingsDialog::fillPortsParameters()
 {
     // fill baud rate (is not the entire list of available values,
     // desired values??, add your independently)
-    ui->rateBox->addItem(QLatin1String("9600"), SerialPort::Rate9600);
-    ui->rateBox->addItem(QLatin1String("19200"), SerialPort::Rate19200);
-    ui->rateBox->addItem(QLatin1String("38400"), SerialPort::Rate38400);
-    ui->rateBox->addItem(QLatin1String("115200"), SerialPort::Rate115200);
-    ui->rateBox->addItem(QLatin1String("Custom"));
-    ui->rateBox->setCurrentIndex(2);
+    ui->baudRateBox->addItem(QLatin1String("9600"), QSerialPort::Baud9600);
+    ui->baudRateBox->addItem(QLatin1String("19200"), QSerialPort::Baud19200);
+    ui->baudRateBox->addItem(QLatin1String("38400"), QSerialPort::Baud38400);
+    ui->baudRateBox->addItem(QLatin1String("115200"), QSerialPort::Baud115200);
+    ui->baudRateBox->addItem(QLatin1String("Custom"));
 
     // fill data bits
-    ui->dataBitsBox->addItem(QLatin1String("5"), SerialPort::Data5);
-    ui->dataBitsBox->addItem(QLatin1String("6"), SerialPort::Data6);
-    ui->dataBitsBox->addItem(QLatin1String("7"), SerialPort::Data7);
-    ui->dataBitsBox->addItem(QLatin1String("8"), SerialPort::Data8);
+    ui->dataBitsBox->addItem(QLatin1String("5"), QSerialPort::Data5);
+    ui->dataBitsBox->addItem(QLatin1String("6"), QSerialPort::Data6);
+    ui->dataBitsBox->addItem(QLatin1String("7"), QSerialPort::Data7);
+    ui->dataBitsBox->addItem(QLatin1String("8"), QSerialPort::Data8);
     ui->dataBitsBox->setCurrentIndex(3);
 
     // fill parity
-    ui->parityBox->addItem(QLatin1String("None"), SerialPort::NoParity);
-    ui->parityBox->addItem(QLatin1String("Even"), SerialPort::EvenParity);
-    ui->parityBox->addItem(QLatin1String("Odd"), SerialPort::OddParity);
-    ui->parityBox->addItem(QLatin1String("Mark"), SerialPort::MarkParity);
-    ui->parityBox->addItem(QLatin1String("Space"), SerialPort::SpaceParity);
+    ui->parityBox->addItem(QLatin1String("None"), QSerialPort::NoParity);
+    ui->parityBox->addItem(QLatin1String("Even"), QSerialPort::EvenParity);
+    ui->parityBox->addItem(QLatin1String("Odd"), QSerialPort::OddParity);
+    ui->parityBox->addItem(QLatin1String("Mark"), QSerialPort::MarkParity);
+    ui->parityBox->addItem(QLatin1String("Space"), QSerialPort::SpaceParity);
 
     // fill stop bits
-    ui->stopBitsBox->addItem(QLatin1String("1"), SerialPort::OneStop);
-#if defined (Q_OS_WIN)
-    ui->stopBitsBox->addItem(QLatin1String("1.5"), SerialPort::OneAndHalfStop);
+    ui->stopBitsBox->addItem(QLatin1String("1"), QSerialPort::OneStop);
+#ifdef Q_OS_WIN
+    ui->stopBitsBox->addItem(QLatin1String("1.5"), QSerialPort::OneAndHalfStop);
 #endif
-    ui->stopBitsBox->addItem(QLatin1String("2"), SerialPort::TwoStop);
+    ui->stopBitsBox->addItem(QLatin1String("2"), QSerialPort::TwoStop);
 
     // fill flow control
-    ui->flowControlBox->addItem(QLatin1String("None"), SerialPort::NoFlowControl);
-    ui->flowControlBox->addItem(QLatin1String("RTS/CTS"), SerialPort::HardwareControl);
-    ui->flowControlBox->addItem(QLatin1String("XON/XOFF"), SerialPort::SoftwareControl);
+    ui->flowControlBox->addItem(QLatin1String("None"), QSerialPort::NoFlowControl);
+    ui->flowControlBox->addItem(QLatin1String("RTS/CTS"), QSerialPort::HardwareControl);
+    ui->flowControlBox->addItem(QLatin1String("XON/XOFF"), QSerialPort::SoftwareControl);
 }
 
 void SettingsDialog::fillPortsInfo()
 {
-    ui->portsBox->clear();
-    foreach (const SerialPortInfo &info, SerialPortInfo::availablePorts()) {
+    ui->serialPortInfoListBox->clear();
+    foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts()) {
         QStringList list;
-        list << info.portName() << info.description()
-             << info.manufacturer() << info.systemLocation()
-             << info.vendorIdentifier() << info.productIdentifier();
+        list << info.portName()
+             << info.description()
+             << info.manufacturer()
+             << info.systemLocation()
+             << (info.vendorIdentifier() ? QString::number(info.vendorIdentifier(), 16) : QString())
+             << (info.productIdentifier() ? QString::number(info.productIdentifier(), 16) : QString());
 
-        ui->portsBox->addItem(list.at(0), list);
+        ui->serialPortInfoListBox->addItem(list.first(), list);
     }
 }
 
 void SettingsDialog::updateSettings()
 {
-    currentSettings.name = ui->portsBox->currentText();
+    currentSettings.name = ui->serialPortInfoListBox->currentText();
 
-    // Rate
-    if (ui->rateBox->currentIndex() == 4) {
-        // custom rate
-        currentSettings.rate = ui->rateBox->currentText().toInt();
+    // Baud Rate
+    if (ui->baudRateBox->currentIndex() == 4) {
+        // custom baud rate
+        currentSettings.baudRate = ui->baudRateBox->currentText().toInt();
     } else {
-        // standard rate
-        currentSettings.rate = static_cast<SerialPort::Rate>(
-                    ui->rateBox->itemData(ui->rateBox->currentIndex()).toInt());
+        // standard baud rate
+        currentSettings.baudRate = static_cast<QSerialPort::BaudRate>(
+                    ui->baudRateBox->itemData(ui->baudRateBox->currentIndex()).toInt());
     }
-    currentSettings.stringRate = QString::number(currentSettings.rate);
+    currentSettings.stringBaudRate = QString::number(currentSettings.baudRate);
 
     // Data bits
-    currentSettings.dataBits = static_cast<SerialPort::DataBits>(
+    currentSettings.dataBits = static_cast<QSerialPort::DataBits>(
                 ui->dataBitsBox->itemData(ui->dataBitsBox->currentIndex()).toInt());
     currentSettings.stringDataBits = ui->dataBitsBox->currentText();
 
     // Parity
-    currentSettings.parity = static_cast<SerialPort::Parity>(
+    currentSettings.parity = static_cast<QSerialPort::Parity>(
                 ui->parityBox->itemData(ui->parityBox->currentIndex()).toInt());
     currentSettings.stringParity = ui->parityBox->currentText();
 
     // Stop bits
-    currentSettings.stopBits = static_cast<SerialPort::StopBits>(
+    currentSettings.stopBits = static_cast<QSerialPort::StopBits>(
                 ui->stopBitsBox->itemData(ui->stopBitsBox->currentIndex()).toInt());
     currentSettings.stringStopBits = ui->stopBitsBox->currentText();
 
     // Flow control
-    currentSettings.flowControl = static_cast<SerialPort::FlowControl>(
+    currentSettings.flowControl = static_cast<QSerialPort::FlowControl>(
                 ui->flowControlBox->itemData(ui->flowControlBox->currentIndex()).toInt());
     currentSettings.stringFlowControl = ui->flowControlBox->currentText();
+
+    // Additional options
+    currentSettings.localEchoEnabled = ui->localEchoCheckBox->isChecked();
 }
+

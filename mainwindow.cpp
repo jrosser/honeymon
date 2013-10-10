@@ -6,7 +6,7 @@
 #include <QMessageBox>
 #include <QTableView>
 #include <QHBoxLayout>
-#include <QtAddOnSerialPort/serialport.h>
+#include <QtSerialPort/QSerialPort>
 #include <QtNetwork>
 
 #include "nodenames.h"
@@ -39,7 +39,7 @@ MainWindow::MainWindow(QWidget *parent) :
     tabs = new QTabWidget();
     setCentralWidget(tabs);
 
-    serial = new SerialPort(this);
+    serial = new QSerialPort(this);
     settings = new SettingsDialog;
 
     ui->actionConnect->setEnabled(true);
@@ -182,9 +182,9 @@ MainWindow::~MainWindow()
 void MainWindow::openSerialPort()
 {
     SettingsDialog::Settings p = settings->settings();
-    serial->setPort(p.name);
+    serial->setPortName(p.name);
     if (serial->open(QIODevice::ReadWrite)) {
-        if (serial->setRate(p.rate)
+        if (serial->setBaudRate(p.baudRate)
                 && serial->setDataBits(p.dataBits)
                 && serial->setParity(p.parity)
                 && serial->setStopBits(p.stopBits)
@@ -195,7 +195,7 @@ void MainWindow::openSerialPort()
             ui->actionDisconnect->setEnabled(true);
             ui->actionConfigure->setEnabled(false);
             ui->statusBar->showMessage(tr("Connected to %1 : %2, %3, %4, %5, %6")
-                                       .arg(p.name).arg(p.stringRate).arg(p.stringDataBits)
+                                       .arg(p.name).arg(p.stringBaudRate).arg(p.stringDataBits)
                                        .arg(p.stringParity).arg(p.stringStopBits).arg(p.stringFlowControl));
 
         } else {
@@ -225,6 +225,11 @@ void MainWindow::closeSerialPort()
     ui->actionDisconnect->setEnabled(false);
     ui->actionConfigure->setEnabled(true);
     ui->statusBar->showMessage(tr("Disconnected"));
+}
+
+void MainWindow::closing()
+{
+    this->closeSerialPort();
 }
 
 void MainWindow::about()
