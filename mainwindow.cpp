@@ -250,7 +250,7 @@ void MainWindow::readData()
 
 void MainWindow::message(QString s)
 {
-    console->putData(s.toAscii());
+    console->putData(s.toLatin1());
 }
 
 void MainWindow::setParser(QString type)

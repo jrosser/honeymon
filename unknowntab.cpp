@@ -2,6 +2,12 @@
 
 #include <QtGui>
 
+#include <QGridLayout>
+#include <QGroupBox>
+#include <QVBoxLayout>
+#include <QTableView>
+#include <QHeaderView>
+
 UnknownTab::UnknownTab(QWidget *parent) :
     QWidget(parent)
 {

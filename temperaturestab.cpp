@@ -2,6 +2,12 @@
 
 #include <QtGui>
 
+#include <QGridLayout>
+#include <QVBoxLayout>
+#include <QGroupBox>
+#include <QTableView>
+#include <QHeaderView>
+
 TemperaturesTab::TemperaturesTab(QWidget *parent) :
     QWidget(parent)
 {

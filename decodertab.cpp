@@ -2,6 +2,11 @@
 
 #include <QtGui>
 
+#include <QGroupBox>
+#include <QLabel>
+#include <QGridLayout>
+#include <QVBoxLayout>
+
 DecoderTab::DecoderTab(QWidget *parent) :
     QWidget(parent)
 {

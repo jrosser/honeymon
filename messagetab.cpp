@@ -2,6 +2,12 @@
 
 #include <QtGui>
 
+#include <QTableView>
+#include <QGridLayout>
+#include <QGroupBox>
+#include <QVBoxLayout>
+#include <QHeaderView>
+
 MessageTab::MessageTab(QWidget *parent) :
     QWidget(parent)
 {

@@ -1,5 +1,5 @@
-CONFIG += serialport
-QT += network
+CONFIG +=
+QT += widgets network serialport
 
 TARGET = honeymon
 TEMPLATE = app
