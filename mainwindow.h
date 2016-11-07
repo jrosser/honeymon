@@ -54,6 +54,7 @@ private slots:
     void setParser(QString);
     void setAsciiParser();
     void setBinaryParser();
+    void writeInflux(const QString string);
 private:
     void initActionsConnections();
 
@@ -63,6 +64,7 @@ private:
     SettingsDialog *settings;
     QSerialPort *serial;
     QUdpSocket *udpSocket;
+    QUdpSocket *influxSocket;
 
     QTabWidget *tabs;
 

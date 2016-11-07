@@ -150,12 +150,25 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(decoder, SIGNAL(manchesterInvalidCount(quint32)), decoderTab, SLOT(manchesterInvalidCount(quint32)));
     connect(decoder, SIGNAL(validMessageCount(quint32)), decoderTab, SLOT(validMessageCount(quint32)));
 
+    //connect decoded messages to influxdb
+    connect(decoder, SIGNAL(influxData(QString)), this, SLOT(writeInflux(QString)));
+
+    //receive broadcast traffic from RF receiver
     udpSocket = new QUdpSocket(this);
     udpSocket->bind(8888, QUdpSocket::ShareAddress);
 
     connect(udpSocket, SIGNAL(readyRead()),
             this, SLOT(readPendingDatagrams()));
+
+    //send influx format data
+    influxSocket = new QUdpSocket(this);
 }
+
+void MainWindow::writeInflux(const QString string)
+{
+  influxSocket->writeDatagram(string.toLatin1(), QHostAddress::LocalHost , 8089);
+}
+
 
 void MainWindow::readPendingDatagrams()
 {

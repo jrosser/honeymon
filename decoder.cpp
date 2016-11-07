@@ -1,9 +1,11 @@
 #include "decoder.h"
+#include "nodenames.h"
 
 Decoder::Decoder()
 {
     state = IDLE;
     raw = new QByteArray;
+    nodenames = new NodeNames();
 
     //initialise statistics
     numInputBytes = 0;
@@ -323,6 +325,8 @@ void Decoder::decode2309(quint32 id1, quint32 id2, quint32 length, quint32 i, QB
         quint32 temp_i = (in.at(n+1) & 0xFF) << 8 | (in.at(n+2) & 0xFF);
         float temp = (float)temp_i / 100.0;
         emit zoneSetpointSetting(id1, id2, zone, temp);
+        emit influxData(QString("setpoint,device=%1,zone=%2 temp=%3") .arg(nodenames->idToName(id1)) .arg(zone) .arg(temp));
+
     }
 }
 
@@ -332,6 +336,8 @@ void Decoder::decode3150(quint32 id1, quint32 id2, quint32 length, quint32 i, QB
     quint32 zone = (in.at(i) & 0xFF);
     quint32 demand = (in.at(i+1) & 0xFF);
     emit heatDemand(id1, id2, zone, demand);
+
+    emit influxData(QString("demand,device=%1,zone=%2 value=%3") .arg(nodenames->idToName(id1)) .arg(zone) .arg(demand));
 }
 
 void Decoder::decode30C9(quint32 id1, quint32 id2, quint32 length, quint32 i, QByteArray &in)
@@ -343,6 +349,8 @@ void Decoder::decode30C9(quint32 id1, quint32 id2, quint32 length, quint32 i, QB
         quint32 temp_i = (in.at(n+1) & 0xFF) << 8 | (in.at(n+2) & 0xFF);
         float temp = (float)temp_i / 100.0;
         emit zoneTempDistribution(id1, id2, zone, temp);
+        emit influxData(QString("temperature,device=%1,zone=%2 temp=%3") .arg(nodenames->idToName(id1)) .arg(zone) .arg(temp));
+
     }
 }
 

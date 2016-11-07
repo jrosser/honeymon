@@ -3,6 +3,8 @@
 
 #include <QObject>
 
+class NodeNames;
+
 class Decoder : public QObject
 {
 Q_OBJECT
@@ -47,12 +49,14 @@ signals:
     void collisionCount(quint32);
 
     void logMessage(QString);
+    void influxData(QString);
 
 public slots:
     void inputBytes(QByteArray in);
 
 private:
     state_t state;
+    NodeNames *nodenames;
     QByteArray *raw;
     void decodeChar(char c);
     void lengthCheck();
